@@ -1,6 +1,4 @@
 import requests.packages.urllib3
-from flask import Flask
-from flask import request
 import requests
 import json
 import route_get
