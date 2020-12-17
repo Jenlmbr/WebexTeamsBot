@@ -1,8 +1,9 @@
 import json 
 import requests 
 import time
+
 requests.packages.urllib3.disable_warnings()
-accessToken = "Bearer YzRlNTg4MTEtMzI0ZC00ZjhhLWEzMjgtZDUxMDg5YTYzZTE0NjMxODhjOGYtZGQw_PF84_consumer"
+accessToken = "Bearer YjJjNDU2NGMtMDBlYS00MzAxLTgwNTgtMjQ5NjA4NjU1MGZkMDE2ZDI4MzQtNTNm_PF84_consumer"
 
 r = requests.get(   "https://api.ciscospark.com/v1/rooms",
                     headers = {"Authorization": accessToken}
@@ -29,7 +30,7 @@ for room in rooms:
 # Searches for name of the room and displays the room
 #######################################################################################
 
-while True:
+
     # Input the name of the room to be searched 
     roomNameToSearch = "ISS Flyover"
 
@@ -56,8 +57,47 @@ while True:
     else:
         break
     
-	
-IP = messages[0]["text"]
+#while True:
+    # add 1 second of delay 
+    time.sleep(1)
+
+    # the Webex Teams GET parameters
+   
+    #  "max": 1  limits to get only the very last message in the room
+    GetParameters = {
+                            "roomId": roomIdToGetMessages,
+                            "max": 1
+                         }
+    # run the call against the messages endpoint of the Webex Teams API using the HTTP GET method
+    r = requests.get("https://api.ciscospark.com/v1/messages", 
+                         params = GetParameters, 
+                         headers = {"Authorization": accessToken}
+                    )
+    # verify if the retuned HTTP status code is 200/OK
+    if not r.status_code == 200:
+        raise Exception( "Incorrect reply from Webex Teams API. Status code: {}. Text: {}".format(r.status_code, r.text))
+    
+    # get the JSON formatted returned data
+    json_data = r.json()
+    # check if there are any messages in the "items" array
+    if len(json_data["items"]) == 0:
+        raise Exception("There are no messages in the room.")
+    
+    # store the array of messages
+    messages = json_data["items"]
+    # store the text of the first message in the array
+    message = messages[0]["text"]
+    print("Received message: " + message)
+    
+    # check if the text of the message starts with the magic character "/" followed by a location name
+    #  e.g.  "/San Jose"
+    #message.find("/") == 0:
+        # name of a location (city) where we check for GPS coordinates using the MapQuest APIs
+        #  message[1:]  returns all letters of the message variable except the first "/" character
+        #   "/San Jose" is turned to "San Jose" and stored in the location variable
+    
+       
+ 
 #Description = input("what is the name of the interface?")
 
 #set API URL
@@ -80,7 +120,7 @@ yangConfig = {
 		"enabled": True,
 		"ietf-ip:ipv4": { 
 			"address": [
-				{ "ip": IP,
+				{ "ip": IP ,
 				"netmask": "255.255.255.0" }
 				] }, 
 		"ietf-ip:ipv6": {}
