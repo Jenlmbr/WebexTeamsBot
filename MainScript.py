@@ -32,7 +32,7 @@ for room in rooms:
 
 
     # Input the name of the room to be searched 
-    roomNameToSearch = "ISS Flyover"
+    roomNameToSearch = "IP_address"
 
     # Defines a variable that will hold the roomId 
     roomIdToGetMessages = None
@@ -87,14 +87,10 @@ for room in rooms:
     messages = json_data["items"]
     # store the text of the first message in the array
     message = messages[0]["text"]
-    print("Received message: " + message)
+    print(int[message])
+   
     
-    # check if the text of the message starts with the magic character "/" followed by a location name
-    #  e.g.  "/San Jose"
-    #message.find("/") == 0:
-        # name of a location (city) where we check for GPS coordinates using the MapQuest APIs
-        #  message[1:]  returns all letters of the message variable except the first "/" character
-        #   "/San Jose" is turned to "San Jose" and stored in the location variable
+IP = "message"
     
        
  
@@ -115,12 +111,12 @@ basicauth = ("developer", "C1sco12345")
 yangConfig = { 
 	"ietf-interfaces:interface": { 
 		"name": "Loopback99",
-		"description": "Loopback99", 
+		"description": "WHATEVER99", 
 		"type": "iana-if-type:softwareLoopback",
 		"enabled": True,
 		"ietf-ip:ipv4": { 
 			"address": [
-				{ "ip": IP ,
+				{ "ip": IP,
 				"netmask": "255.255.255.0" }
 				] }, 
 		"ietf-ip:ipv6": {}
