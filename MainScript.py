@@ -8,30 +8,22 @@ accessToken = "Bearer YjJjNDU2NGMtMDBlYS00MzAxLTgwNTgtMjQ5NjA4NjU1MGZkMDE2ZDI4Mz
 r = requests.get(   "https://api.ciscospark.com/v1/rooms",
                     headers = {"Authorization": accessToken}
                 )
-#######################################################################################
-# Check if the response from the API call was OK (r. code 200)
-#######################################################################################
+
+# Check response from the API call 
+
 if not r.status_code == 200:
     raise Exception("Incorrect reply from Webex Teams API. Status code: {}. Text: {}".format(r.status_code, r.text))
 
 
-#######################################################################################
-# Displays a list of rooms.
-#
-# If you want to see additional key/value pairs such as roomID:
-#	print ("Room name: '" + room["title"] + "' room ID: " + room["id"])
-#######################################################################################
+#check If Room is available, and display it
+
 print("List of rooms:")
 rooms = r.json()["items"]
 for room in rooms:
     print (room["title"])
 
-#######################################################################################
-# Searches for name of the room and displays the room
-#######################################################################################
 
-
-    # Input the name of the room to be searched 
+    # Roomname
     roomNameToSearch = "IP_address"
 
     # Defines a variable that will hold the roomId 
@@ -42,26 +34,26 @@ for room in rooms:
         if(room["title"].find(roomNameToSearch) != -1):
 
             # Displays the rooms found using the variable roomNameToSearch (additional options included)
-            print ("Found rooms with the word " + roomNameToSearch)
+            print ("Found room " + roomNameToSearch)
             print(room["title"])
 
             # Stores room id and room title into variables
             roomIdToGetMessages = room["id"]
             roomTitleToGetMessages = room["title"]
-            print("Found room : " + roomTitleToGetMessages)
+            print("Room: " + roomTitleToGetMessages + " available")
             break
 
     if(roomIdToGetMessages == None):
-        print("Sorry, I didn't find any room with " + roomNameToSearch + " in it.")
-        print("Please try again...")
+        print("Room " + roomNameToSearch + " not found")
+       
     else:
         break
     
-#while True:
-    # add 1 second of delay 
+
+    # add  delay 
     time.sleep(1)
 
-    # the Webex Teams GET parameters
+    
    
     #  "max": 1  limits to get only the very last message in the room
     GetParameters = {
@@ -86,20 +78,21 @@ for room in rooms:
     # store the array of messages
     messages = json_data["items"]
     # store the text of the first message in the array
-    message = messages[0]["text"]
-    print(int[message])
+    message = messages[1]["text"]
+    print(message)
+    
    
     
-IP = "message"
+#IP = "message"
     
        
  
-#Description = input("what is the name of the interface?")
+Description = "message"
 
 #set API URL
 api_url = "https://10.10.20.48/restconf/data/ietf-interfaces:interfaces/interface=Loopback99"
 
-#create dictionary variable for the keys
+#dictionary variable
 headers = { "Accept": "application/yang-data+json",
             "Content-type":"application/yang-data+json"
           }
@@ -110,13 +103,13 @@ basicauth = ("developer", "C1sco12345")
 #config for interface
 yangConfig = { 
 	"ietf-interfaces:interface": { 
-		"name": "Loopback99",
+		"name": "Description",
 		"description": "WHATEVER99", 
 		"type": "iana-if-type:softwareLoopback",
 		"enabled": True,
 		"ietf-ip:ipv4": { 
 			"address": [
-				{ "ip": IP,
+				{ "ip": "192.168.1.10",
 				"netmask": "255.255.255.0" }
 				] }, 
 		"ietf-ip:ipv6": {}
