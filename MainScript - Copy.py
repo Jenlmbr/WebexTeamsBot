@@ -1,8 +1,6 @@
 import requests
 import json
 import time
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 accessToken = "Bearer ZDM1MDRiOGEtN2ZkYi00YWI0LTkxYjktYmMzYTdiZWUwYzQwODQ0ODAwNjUtZjZm_PF84_consumer"
 
 
@@ -24,7 +22,7 @@ for room in rooms:
     print (room["title"])
 while True:
     # Input the name of the room to be searched 
-    roomNameToSearch = "IP_Address"
+    roomNameToSearch = "IP_Adress"
 
     # Defines a variable that will hold the roomId 
     roomIdToGetMessages = None
