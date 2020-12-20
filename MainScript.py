@@ -83,7 +83,10 @@ while True:
     messages = json_data["items"]
     # store the text of the first message in the array
     ip = messages[0]["text"]
-    print("Received message: " + ip)
+    a,b,c = ip.split()
+    print("The description is: " + a)
+    print("The IP address is: " + b)
+    print("The subnetmask is: " + c)
 
     
 
@@ -106,13 +109,13 @@ while True:
     yangConfig = { 
             "ietf-interfaces:interface": { 
                     "name": "Loopback01",
-                    "description": "First Loopback interface", 
+                    "description": a, 
                     "type": "iana-if-type:softwareLoopback",
          	    "enabled": True,
                     "ietf-ip:ipv4": { 
 			"address": [
-				{ "ip": ip,
-				"netmask": "255.255.255.0" }
+				{ "ip": b,
+				"netmask": c }
                     		] }, 
                     "ietf-ip:ipv6": {}
 			} 
@@ -125,6 +128,7 @@ while True:
             print("STATUS OK: {}".format(resp.status_code)) 
     else: 
             print("Error code {}, reply: {}".format(resp.status_code, resp.json()))
+
 
                             
                            
