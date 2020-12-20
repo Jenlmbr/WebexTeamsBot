@@ -3,12 +3,13 @@ import json
 import time
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-accessToken = "Bearer ZDM1MDRiOGEtN2ZkYi00YWI0LTkxYjktYmMzYTdiZWUwYzQwODQ0ODAwNjUtZjZm_PF84_consumer"
+accessToken = "Bearer Mjc2MjE2NmYtMmM1Yi00OWNiLWIyNWUtMDIxNDM2MTZhZDE0ODJjYzdjNWQtNTYw_PF84_consumer"
 
+########################################################
+# Get data to convert to variable from Webex API/Room  #
+########################################################
 
-
-	
-
+#Connect to API Webex
 
 r = requests.get(   "https://api.ciscospark.com/v1/rooms",
                     headers = {"Authorization": accessToken}
@@ -22,37 +23,40 @@ print("List of rooms:")
 rooms = r.json()["items"]
 for room in rooms:
     print (room["title"])
-while True:
-    # Input the name of the room to be searched 
+
+    # Add delay
+    time.sleep(1)
+	
+    # Define room to search for IP + variable for roomid
     roomNameToSearch = "IP_Address"
 
-    # Defines a variable that will hold the roomId 
+  
     roomIdToGetMessages = None
     
     for room in rooms:
-        # Searches for the room "title" using the variable roomNameToSearch 
+        # Room is defined in variable 
         if(room["title"].find(roomNameToSearch) != -1):
 
-            # Displays the rooms found using the variable roomNameToSearch (additional options included)
-            print ("Found rooms with the word " + roomNameToSearch)
+            # Displays the rooms found
+            print ("Room " + roomNameToSearch + " found")
             print(room["title"])
 
-            # Stores room id and room title into variables
+            # Variable for roomId and message created
             roomIdToGetMessages = room["id"]
             roomTitleToGetMessages = room["title"]
             print("Found room : " + roomTitleToGetMessages)
             break
 
     if(roomIdToGetMessages == None):
-        print("Sorry, I didn't find any room with " + roomNameToSearch + " in it.")
-        print("Please try again...")
+        print("Room " + roomNameToSearch + " Not found")
+       
     else:
         break
 
 
-# run the "bot" loop until manually stopped or an exception occurred
+
 while True:
-    # always add 1 second of delay to the loop to not go over a rate limit of API calls
+    # Add delay
     time.sleep(1)
 
    
@@ -60,31 +64,34 @@ while True:
                             "roomId": roomIdToGetMessages,
                             "max": 1
                          }
-    # run the call against the messages endpoint of the Webex Teams API using the HTTP GET method
+    # run the call against the messages endpoint of the Webex Teams API
     r = requests.get("https://api.ciscospark.com/v1/messages", 
                          params = GetParameters, 
                          headers = {"Authorization": accessToken}
                     )
-    # verify if the retuned HTTP status code is 200/OK
+    # verify if the retuned status is ok
     if not r.status_code == 200:
         raise Exception( "Incorrect reply from Webex Teams API. Status code: {}. Text: {}".format(r.status_code, r.text))
     
     # get the JSON formatted returned data
     json_data = r.json()
-    # check if there are any messages in the "items" array
+    # check for 'items' in array
     if len(json_data["items"]) == 0:
-        raise Exception("There are no messages in the room.")
+        raise Exception("no messages")
     
-    # store the array of messages
+    # store messages
     messages = json_data["items"]
     # store the text of the first message in the array
-    message = messages[0]["text"]
-    print("Received message: " + message)
+    ip = messages[0]["text"]
+    print("Received message: " + ip)
 
     
 
-   
-            #set API URL
+##########################################################
+# return fetched info from API Webex to Cico Devnet API  #
+##########################################################
+
+    #set API URL
     api_url = "https://10.10.20.48/restconf/data/ietf-interfaces:interfaces/interface=Loopback01"
 
     #dictionary variable
@@ -101,15 +108,15 @@ while True:
                     "name": "Loopback01",
                     "description": "First Loopback interface", 
                     "type": "iana-if-type:softwareLoopback",
-                    "enabled": True,
+         	    "enabled": True,
                     "ietf-ip:ipv4": { 
-                            "address": [
-                                    { "ip": message,
-                                    "netmask": "255.255.255.0" }
-                                    ] }, 
+			"address": [
+				{ "ip": ip,
+				"netmask": "255.255.255.0" }
+                    		] }, 
                     "ietf-ip:ipv6": {}
-                            } 
-                    }
+			} 
+		}
                     
     #send 'put' request
     resp = requests.put(api_url, data=json.dumps(yangConfig), auth=basicauth, 
