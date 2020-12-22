@@ -3,13 +3,11 @@ import json
 import time
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-accessToken = "Bearer Mjc2MjE2NmYtMmM1Yi00OWNiLWIyNWUtMDIxNDM2MTZhZDE0ODJjYzdjNWQtNTYw_PF84_consumer"
+accessToken = "Bearer ZTc0ODk0MzUtMGY3OC00N2E3LTgyMjktZWMzODgzYTU2ZDNkN2NiY2IyNDEtMTJk_PF84_consumer"
 
-########################################################
-# Get data to convert to variable from Webex API/Room  #
-########################################################
-
-#Connect to API Webex
+###########################################
+# Get data from webex chatbox through API #
+###########################################
 
 r = requests.get(   "https://api.ciscospark.com/v1/rooms",
                     headers = {"Authorization": accessToken}
@@ -83,15 +81,14 @@ while True:
     messages = json_data["items"]
     # store the text of the first message in the array
     ip = messages[0]["text"]
-    a,b,c = ip.split()
-    print("The description is: " + a)
-    print("The IP address is: " + b)
-    print("The subnetmask is: " + c)
+    description,ip,subnet = ip.split()
+    print("The description is: " + description)
+    print("The IP address is: " + ip)
+    print("The subnet mask is: " + subnet)
 
-    
 
 ##########################################################
-# return fetched info from API Webex to Cico Devnet API  #
+# return fetched info from API Webex to Cisco Devnet API  #
 ##########################################################
 
     #set API URL
@@ -109,13 +106,13 @@ while True:
     yangConfig = { 
             "ietf-interfaces:interface": { 
                     "name": "Loopback01",
-                    "description": a, 
+                    "description": description, 
                     "type": "iana-if-type:softwareLoopback",
          	    "enabled": True,
                     "ietf-ip:ipv4": { 
 			"address": [
-				{ "ip": b,
-				"netmask": c }
+				{ "ip": ip,
+				"netmask": subnet }
                     		] }, 
                     "ietf-ip:ipv6": {}
 			} 
@@ -128,7 +125,3 @@ while True:
             print("STATUS OK: {}".format(resp.status_code)) 
     else: 
             print("Error code {}, reply: {}".format(resp.status_code, resp.json()))
-
-
-                            
-                           
